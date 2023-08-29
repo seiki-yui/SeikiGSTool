@@ -1,0 +1,13 @@
+﻿import console; 
+import seiki;
+import seiki.gsonline;
+
+seiki.gsonline(function(prcs, ...) { 
+	import console;
+	console.open()
+	console.log("圆神，启动！")
+	console.log(prcs, ...)
+}, "wwwww")
+
+
+console.pause(true)

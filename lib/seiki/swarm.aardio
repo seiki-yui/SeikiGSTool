@@ -1,0 +1,111 @@
+﻿//Swarm
+namespace seiki;
+class swarm {
+    ctor(is_popen = true) {
+        import seiki;
+        import process;
+        import process.popen;
+        import win;
+        import winex;
+        import winex.mouse;
+        import fsys;
+        import fsys.file;
+        import string.toml;
+        import io;
+        import inet.http;
+        import thread;
+        import console;
+        
+        this.path := global.path_swarm
+        if (is_popen) {
+            this.prcs = process.popen(this.path);
+            do { this.hwnd = win.find(, "Swarm") } while (!this.hwnd && thread.delay(50))
+        } else {
+            this.prcs = process(this.path);
+            this.hwnd = seiki.waitMainWindow(this.prcs)
+        }
+    };
+    open = function() {
+        var hwnd_button = winex.findEx(this.hwnd, , "Button", "中转")
+        winex.mouse.click(hwnd_button, 72, 28)
+    };
+    get_ip = function() {
+		var hwnd_edit = winex.findEx(this.hwnd, , "Edit")
+		return winex.getText(hwnd_edit);
+   	};
+	get_version_new = function() {
+    	var http = inet.http();
+    	var ret = http.get("https://swarm-1251032844.cos.ap-shanghai.myqcloud.com/swarm-win32/canary/VERSION")
+    	ret = string.replace(ret, "[\r\n]", ""); // 保留第一个返回值
+    	http.close()
+    	return ret;
+	};
+}
+
+
+
+/**
+get_ip = function(time = 3000) {
+        var hwnd_edit = winex.findEx(this.hwnd, , "Edit")
+        var get = λ() winex.getText(hwnd_edit)
+        this.ip_last = get();
+        this.open()
+        while (win.find("#32768")) thread.delay(50)
+        do {
+            ip = get();
+            t := 0;
+            t += 50;
+            if (t > time) {
+                return ip!==null? ip: this.ip_last;
+            }
+        } while (ip == this.ip_last && thread.delay(50))
+        return ip;
+    };
+    get_ip_old = function(time = 3000) {
+        var hwnd_edit = winex.findEx(this.hwnd, , "Edit")
+        var get = λ() winex.getText(hwnd_edit)
+        this.is_getting_ip = true
+        while (win.find("#32768")) thread.delay(50)
+        do {
+            ip = get();
+            t := 0;
+            t += 50;
+            if (t > time) {
+                this.is_getting_ip = false
+                return ip;
+            }
+        } while (ip == this.ip_last && thread.delay(50))
+        this.ip_last = ip;
+        this.is_getting_ip = false
+        return ip;
+    };
+    get_version_old = function() {
+        // 弃用
+        var hwnd_button = winex.findEx(this.hwnd, , "Button", "关于")
+        winex.mouse.click(hwnd_button, 72, 28)
+        do {
+            hwnd_about = winex.find(, "关于", this.prcs.id)
+        } while (!hwnd_about && thread.delay(50))
+        var hwnd_version = winex.findEx(hwnd_about, , "Static", "当前版本：")
+        var get = λ() winex.getText(hwnd_version)
+        do {
+            try {
+                version = get()
+            }
+            catch (e) {}
+        }
+        while (version == null && e == null && thread.delay(10))
+        /*
+try {
+			version = winex.getText(hwnd_version)
+		} catch(e) {
+			win.close(hwnd_about)
+			thread.delay(10)
+			return this.get_version(); 
+		}
+*/
+        win.close(hwnd_about)
+        ret = string.replace(version, "当前版本：", ""); // 保留第一个返回值
+        return ret;
+    };
+**/

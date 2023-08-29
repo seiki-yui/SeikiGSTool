@@ -1,0 +1,158 @@
+﻿//GSOnline
+namespace seiki;
+class gsonline {
+    ctor(func, ...) {
+        import seiki;
+        import process;
+        import winex;
+        import win;
+        import console;
+        import thread.command;
+        import seiki.game;
+        import thread
+		
+		this.args = { ... }
+		
+        this.path = global.path_gsonline
+        this.prcs = process(this.path)
+        this.hwnd = seiki.waitMainWindow(this.prcs, 1000, "GriefSyndrome Online")
+        
+        //替换，狠狠滴替换，都可以替换，
+        replace = function(type_desu, str1, str2)  winex.setText(winex.findEx(this.hwnd,, type_desu, str1), str2)        
+        replace("Button", "ホスト", 		"做主机")
+        replace("Button", "クライアント","做客机")
+        replace("Static", "アドレス", 	"ip地址")
+        replace("Static", "ポート", 		"端口")
+        replace("Static", "募集人数", 	"限制人数")
+        replace("Button", "接続", 		"连接")
+        replace("Button", "1人", 		"1人")
+        replace("Button", "2人", 		"2人")
+        replace("Button", "ゲーム開始", 	"开始游戏")
+        
+        var listener = thread.command();
+        listener.get_title = function() try { return winex.getText(this.prcs.waitMainWindow()) }
+        listener.get_code = lambda() this.prcs.getInfo().exitStatus
+        listener.game_start = function() { func(this.prcs, ..table.unpackArgs(this.args)) }
+        
+        edit = winex.findEx(this.hwnd, 3, "Edit")
+        thread.invoke(function(listener, prcs, hwnd, edit) {
+            import process;
+            import winex;
+            import win;
+            import string;
+            import console;
+            import thread;
+            do {
+                if (win.isWindow(edit)) try {
+                    msg = winex.getText(edit); str = msg
+                    replace = function(s1, s2) str = string.replace(str, s1, s2)
+                    if (!msg) return ; 
+                    replace("通信を開始します。",
+                    		"开始连接。")
+                    replace("通信を終了しました。", 
+                    		"连接已关闭。")
+                    replace("通信中は終了できません。", 
+                    		"连接中不能关闭程序。请切断连接之后再关闭。")
+                    replace("通信中にエラーが発生しました。", 
+                    		"连接发生错误。")
+                    replace("ホストから切断されました。", 
+                    		"主机切断了连接。")
+                    replace("ホストから応答がありませんでした。", 
+                    		"主机没有应答。")
+                    replace("ホストに接続できませんでした。アドレスとポート番号を確認してください。", 
+                    		"无法连接到主机。请确认ip地址和端口号。")
+                    replace("他の参加者からの接続を待っています...", 
+                    		"正在等待其他玩家的连接...")
+                    replace("参加を受け付けました。", 
+                    		"有玩家接受了连接。")
+                    replace("参加が承認されました。（プレイヤー", 
+                    		"成功加入。（玩家")
+                    replace("参加者から切断されました。", 
+                    		"有玩家断开了连接。")
+                    replace("参加が拒否されました。（受付は終了しました）", 
+                    		"连接请求被拒绝。（房间已满）")
+                    replace("参加者に開始を通知しています...", 
+                    		"正在通知参加者开始...")
+                    replace("参加者から応答がありませんでした。", 
+                    		"参加者没有应答。")
+                    replace("参加者がいません。", 
+                    		"目前没有参加者。")
+                    replace("開始されるまでしばらくお待ちください...", 
+                    		"在游戏开始前请稍等...")
+                    replace("開始OK。", 
+                    		"开始成功。")
+                    if (msg != str) {
+                        winex.setText(edit, str)
+                        //发送滚动Message 使用Win32api aardio的黑科技
+                        var lh = ::SendMessage(edit, 0xBA /*_EM_GETLINECOUNT*/ )
+                        ::SendMessageInt(edit, 0xB6 /*_EM_LINESCROLL*/ , 0, lh - 9)
+                    }
+                }
+				
+			replace = function(tab){   
+    			it_win = winex.find("#32770", tab[1], prcs.id)
+    			if (it_win !== null) {
+        			if (tab[2] !== "") winex.setText(it_win, tab[2])
+        			if (#tab > 2) for(i = 3; #tab; 2) {
+            			type_desu = (tab["type"] !== null)? tab["type"][(i - 1) / 2]: "Static"
+            			it_text = winex.findEx(it_win, ,type_desu, tab[i])
+            			if (it_text) {
+            				if (#tab > 3) winex.setText(it_text, tab[i + 1])
+            				if (tab["offset"] !== null) {
+            					var off = tab["offset"][(i - 1) / 2]
+            					if (off !== null) win.setRect(it_text, win.getRect(it_text).
+            						expand(0, off > 0? off: 0).offset(0, - ..math.roundToEven(off / 2)
+            					))
+            				}
+            			}	
+        			}
+    			}
+    			if (tab["func"] !== null) if (type(tab["func"]) == type.function) tab["func"]()
+    			return it_win; 
+			}           
+			replace({
+            		"ご利用上の注意", "使用注意",
+            		"タイトル画面のExit",
+            		'请在标题画面选择Exit来结束GriefSyndrome。\r\n\r\n\r\n不执行断开连接的操作而强制关闭游戏，无法保证联机正常运行。\r\n\r\n\r\n关闭游戏窗口或在主机先切断连接的情况下会自动断开连接。\r\n\r\n\r\n※本消息只在第一次打开时显示。'
+            	})
+            } while (win.isWindow(hwnd) && thread.delay(50))
+            //try {
+ 				listener.game_start()
+            //}
+        }, listener, this.prcs, this.hwnd, edit)
+    };
+}
+
+/*
+ホスト			做主机			做攻
+クライアント	做客机			做受
+アドレス		ip地址			地址	
+ポート			端口			门牌号
+募集人数		募集人数		银趴人数
+接続			连接			加入
+1人				1人
+2人				2人
+ゲーム開始		开始游戏		开始聚众银趴
+错误			错误
+通知			通知
+確認			确认
+終了			结束
+
+通信を開始します。							开始连接。
+通信を終了しました。						连接已关闭。
+通信中は終了できません。					连接中不能关闭程序。请切断连接之后再关闭。
+通信中にエラーが発生しました。				连接发生错误。
+ホストから切断されました。					主机切断了连接。 
+ホストから応答がありませんでした。			主机没有应答。
+ホストに接続できませんでした。アドレスとポート番号を確認してください。
+											无法连接到主机。请确认ip地址和端口号。
+他の参加者からの接続を待っています...		正在等待其他玩家的连接...
+参加を受け付けました。						有玩家接受了连接。
+参加者から切断されました。					有玩家断开了连接。
+参加が承認されました。（プレイヤーN）		成功加入。（玩家N）
+参加が拒否されました。（受付は終了しました）连接请求被拒绝。（房间已满）
+参加者に開始を通知しています...				正在通知参加者开始...
+...参加状況									连接人数
+開始されるまでしばらくお待ちください...		在游戏开始前请稍等...
+開始OK。									开始成功。发车！
+*/

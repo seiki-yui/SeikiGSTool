@@ -1,0 +1,38 @@
+//config 配置文件
+import fsys.config;
+//config  = fsys.config("/config/"); 
+config  = fsys.config( io.appData("/Seiki/GSTool/") ); 
+// := 是delphi里的操作符
+// 因为aardio的语言类型 隐式转换特别迷，就像JS那样
+// 三元运算符是通过 把 ?调整为 and && ，把 :调整为 or || 实现的，
+// 所以一旦 左值为 false，0 的时候也会赋值上去，而不是只有左值为null的时候才赋值、
+// 被这个坑了好多次
+/*
+i = 0; v = 100;
+i := 1;
+v := 9;
+import console;
+console.log(i, v)
+// 此时的i 是 1, v 是 100。
+*/
+
+
+if (config.online.share_l === null)		config.online.share_l := '原生低周娱乐车\r\n'
+if (config.online.share_r === null)		config.online.share_r := ''
+if (config.online.share === null)		config.online.share := true
+if (config.online.swarm_popen === null)	config.online.swarm_popen := true
+if (config.online.auto_ip === null)		config.online.auto_ip := true
+
+//不需要序列化的配置名字前请添加下划线
+namespace config {
+	_appName = "SeikiGSTool";
+	__website = "http://www.aardio.com/";
+	
+}
+
+/**intellisense(config)
+__appName = 应用程序名
+__website = 官方网站
+saveAll() = 写入所有配置到文件
+? = 获取值时指定不以下划线开始的配置表名称，\n返回一个可自动序列化到同名配置文件的表对象。\n如果此对象名以下划线开始，则可以正常读写值不会序列化为配置文件。\n否则不能对此对象直接赋值，只能对配置表对象的成员赋值。\n\n配置表可自动自文件加载,退出线程前自动序列化并存入文件。\n仅序列化以字符串、数值为键的元素，\n仅序列化值为字符串、数值、buffer 以及定义了 _serialize 元方法的成员。\n循环引用的值转换为 null，序列化时忽略成员函数\n!fsys_table.
+end intellisense**/

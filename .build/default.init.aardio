@@ -1,0 +1,16 @@
+//发布前触发
+import ide;
+
+var dir = ide.getProjectDir()
+var name = ide.getProjectProperty("name")
+var date = fsys.file(io.joinpath(dir,"/res/build.date"), "w")
+var version = ide.getProjectProperty("ProductVersion")
+var t = time()
+t.format = "%Y%m%d%H%M"
+
+ide.setPublishName(name + "启动器_概念版A" + tostring(t) + ".exe")
+//ide.setPublishName(name + "_Beta" + version + ".exe")
+
+date.write(t.getMilliTime())
+date.flush()
+date.close()

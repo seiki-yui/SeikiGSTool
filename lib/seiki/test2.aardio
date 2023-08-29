@@ -1,0 +1,29 @@
+import win.ui;
+
+namespace seiki;
+class test2{
+	ctor(parent,tParam){
+	/*DSG{{*/
+	this = ..win.form(text="aardio form";right=759;bottom=469;parent=parent)
+	this.add()
+	/*}}*/
+	
+	};
+}
+
+import console; 
+import seiki;
+import seiki.gsonline;
+
+seiki.gsonline(function(prcs, arg, arg2) { 
+	import console;
+	console.open()
+	console.log("圆神，启动！")
+	console.dump(arg, arg2)
+}, "114514", "1919810")
+
+
+if( !owner ) ..seiki.test2().doModal();
+/**intellisense()
+seiki.test2() = 窗口类\n!winform.
+end intellisense**/

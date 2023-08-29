@@ -1,0 +1,31 @@
+// config
+import win.ui;
+import table
+import seiki;
+/*DSG{{*/
+var winform = win.form(text="SeikiGSTool 选项设置";right=419;bottom=362)
+winform.add(
+tab={cls="tab";left=8;top=8;right=414;bottom=356;ah=1;aw=1;edge=1;z=1}
+)
+/*}}*/
+
+seiki.set_font(winform)
+
+//w + 6，h + 28
+
+/*
+winform.tab.loadForm("\dlg\ui1.0.aardio")
+winform.tab.loadForm("\dlg\ui2.0.aardio")
+winform.tab.loadForm("\dlg\ui3.0.aardio")
+*/
+
+//嵌入子窗口
+winform.tab.loadForm("\dlg\config_mods.aardio")
+winform.tab.loadForm("\dlg\config_online.aardio")
+winform.tab.loadForm("\dlg\config_phrases.aardio")
+
+seiki.set_font(winform.tab.items)
+
+winform.show();
+win.loopMessage();
+return winform;

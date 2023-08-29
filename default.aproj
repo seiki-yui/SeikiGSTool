@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project ver="10" name="SeikiGSTool" libEmbed="true" icon="\Seiki.ico" ui="win" output="SeikiGSTool启动器_概念版A202308291023.exe" CompanyName="单位名称" FileDescription="SeikiGSTool" LegalCopyright="Copyright (C) 作者 2023" ProductName="SeikiGSTool" InternalName="SeikiGSTool" FileVersion="0.0.1.0" ProductVersion="0.0.1.0" publishDir="/dist/" dstrip="false" local="false" ignored="false">
+	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
+	<folder name="资源文件" path="res" embed="true" local="true" ignored="false">
+		<file name="build.date" path="res\build.date" comment="res\build.date"/>
+		<file name="index.html" path="res\index.html" comment="res\index.html"/>
+	</folder>
+	<folder name="窗体文件" path="dlg" comment="目录" embed="true" local="true" ignored="false">
+		<file name="configs.aardio" path="dlg\configs.aardio" comment="dlg\config.aardio"/>
+		<file name="config_mods.aardio" path="dlg\config_mods.aardio" comment="dlg\config_mods.aardio"/>
+		<file name="config_online.aardio" path="dlg\config_online.aardio" comment="dlg\config_online.aardio"/>
+		<file name="config_phrases.aardio" path="dlg\config_phrases.aardio" comment="dlg\config_phrases.aardio"/>
+		<file name="main - 测试.aardio" path="dlg\main - 测试.aardio" comment="dlg\main - 副本.aardio"/>
+		<file name="ui1.0.aardio" path="dlg\ui1.0.aardio" comment="dlg\ui1.0.aardio"/>
+		<file name="ui2.0.aardio" path="dlg\ui2.0.aardio" comment="dlg\ui2.0.aardio"/>
+		<file name="ui3.0.aardio" path="dlg\ui3.0.aardio" comment="dlg\ui3.0.aardio"/>
+	</folder>
+</project>

@@ -1,0 +1,159 @@
+﻿//Game
+namespace seiki
+class game {
+    ctor(prcs) {
+        // 游戏Game类
+        
+        import seiki;
+        import seiki.game
+        import process;
+        import win;
+        import winex;
+        import string;
+        import thread;
+        import console;
+        
+        this.path = global.path_game
+        this.prcs = prcs ? prcs : process(this.path)
+        if (this.prcs === null) return; 
+        //等待主窗口
+		this.hwnd = seiki.waitMainWindow(this.prcs, 200)
+        if (this.hwnd === null) return; 
+		//获取标题直到游戏响应
+		do { title = winex.getText(this.hwnd)
+        	} while (title == null && thread.delay(10))
+       
+      	//修复乱码 Shift-JIS的编码错误的以GBK方式显示了，读取会返回UTF-8的字符串
+        // UTF-8 -> GBK(GB18030) -> Shift-JIS -> UTF-8
+        str = string.fromto(string.fromto(title, 54936), 932)
+        str = string.fromUnicode(string.toUnicode(str))
+        // 替换日文
+        str = string.replace(str, "再生", "重放")
+        str = string.replace(str, "記録", "录像")
+        // 如果OK就换上去标题
+        if !string.find(str, "?") winex.setText(this.hwnd, str)
+        
+        import thread.command;
+        listener = thread.command()
+        listener.get_code = λ() this.prcs.getInfo().exitStatus
+        thread.invoke(function(listener, prcs) {
+            import win;
+            import winex;
+            import thread;
+            import console;
+			replace = function(tab){   
+    			it_win = winex.find("#32770", tab[1], prcs.id)
+    			if (it_win !== null) {
+        			if (tab[2] !== "") winex.setText(it_win, tab[2])
+        			if (#tab > 2) for(i = 3; #tab; 2) {
+            			type_desu = (tab["type"] !== null)? tab["type"][(i - 1) / 2]: "Static"
+            			it_text = winex.findEx(it_win, ,type_desu, tab[i])
+            			if (it_text) {
+            				if (#tab > 3) winex.setText(it_text, tab[i + 1])
+            				if (tab["offset"] !== null) {
+            					var off = tab["offset"][(i - 1) / 2]
+            					if (off !== null) win.setRect(it_text, win.getRect(it_text).
+            						expand(0, off > 0? off: 0).offset(0, - ..math.roundToEven(off / 2)
+            					))
+            				}
+            			}	
+        			}
+    			}
+    			if (tab["func"] !== null) if (type(tab["func"]) == type.function) tab["func"]()
+    			return it_win; 
+			}
+            do {
+                // 汉化弹出窗口
+                replace({
+                	"DSound-Error", 	"DSound错误", 
+                	"DirectSound僆僽僕僃僋僩偺弶婜壔偵幐攕", 
+                	'无法初始化DirectSound对象\r\n可能是因为没有音频输出设备，可以尝试连接音响或者耳机到电脑',
+                	offset = { 35 }
+                }) replace({
+                	"DInput-Error", 	"DInput错误", 
+                	"DirectInput僆僽僕僃僋僩偺嶌惉偵幐攕", 
+                	'无法创建DirectInput对象\r\n可以尝试安装DirectX',
+                	offset = { 22 }
+                }) replace({
+                	"Error", 	"错误", 
+                	"弶婜壔幐攕", 
+                	"初始化失败",
+                	"乽僎乕儉杮懱乿傕偟偔偼乽僎乕儉愝掕乿偑婛偵婲摦偟偰偄傑偡丅",
+                	"「游戏本体」或「游戏设置」已经启动了。",
+                }) replace({
+                	"RunScript Error", 	"游戏运行错误"
+                }) replace({
+                	"错误",		"",
+                	"指定されたリプレイフォルダは存在しません",
+                	"指定的Replay重放录像文件夹不存在。Replay重放录像数据将不予保存。"
+                })replace({
+                	"ご利用上の注意",		"使用注意",
+                	"タイトル画面のExit",
+                	'请在标题画面选择Exit来结束GriefSyndrome。\r\n\r\n\r\n不执行断开连接的操作而强制关闭游戏，无法保证联机正常运行。\r\n\r\n\r\n关闭游戏窗口或在主机先切断连接的情况下会自动断开连接。\r\n\r\n\r\n※本消息只在第一次打开时显示。'
+                })replace({
+                	"通知",		"",
+                	"ホストから切断",
+                	"主机切断了连接。",
+                	"参加者から切断",
+                	"有玩家断开了连接。"
+                })replace({
+                	"確認",		"确认",
+                	"通信を終了しますか？",
+                	"确定要关闭连接吗？"
+                })replace({
+                	"終了",		"结束",
+                	"通信を終了しました。",
+                	"连接已结束。",
+                	"リプレイ再生を終了しました。",
+                	"Replay游戏重放已结束。"
+                })
+            } while (listener.get_code() != 0 && thread.delay(50))
+        }, listener, this.prcs)
+        
+        this.set_size(size.w, size.h)
+    };
+    is_game = function(){
+    	return !winex.find("#32770",, this.prcs.id);
+    };
+    //设置窗口大小
+    set_size = function(w = 800, h = 600) {
+        var rc = win.getRect(this.hwnd, true)
+        var ox = (rc.width() - w - 6) / 2
+        var oy = (rc.height() - h - 28) / 2
+        var ret = ::RECT(rc.left + ox, rc.top + oy, rc.left + w + 6 + ox, rc.top + h + 28 + oy)
+        if ret.left < 0 ret.setPos(0)
+        if ret.top < 0 ret.setPos(,0)
+        win.setRect(this.hwnd, ret, true)
+        return ret;
+    };
+    //设置窗口大小 4:3等比缩放
+    set_size_scale = function(s = 1) {
+        return this.set_size(math.roundToEven(800 * s), math.roundToEven(600 * s));
+    };
+    //设置窗口大小 从列表读取
+    set_size_from_list = function(index) {
+    	this.set_size(seiki.size_list[index].width, seiki.size_list[index].height)	
+    };
+}
+
+
+/*
+参加者から切断されました。					有玩家断开了连接。
+通信を終了しますか？						确定要关闭连接吗？
+指定されたリプレイフォルダは存在しません。リプレイデータは保存されません。
+											指定的Replay重放录像文件夹不存在。Replay重放录像数据将不予保存。
+ホストから切断されました。					主机切断了连接。
+通信を終了しました。						连接已结束。
+タイトル画面のExitからグリーフシンドロームを終了する場合は必ず、
+終了前に通信終了操作を行ってください。（→[F12キー]）
+通信終了操作を行わずにグリーフシンドロームを終了した場合の
+動作の保証は致しません。
+クライアント利用時、ホストが先に切断した場合は
+自動的に通信を終了します。
+※このメッセージは初回実行時のみ表示されます。
+
+请在标题画面选择Exit来结束GriefSyndrome。
+不执行断开连接的操作而强制关闭游戏，无法保证联机正常运行。
+关闭游戏窗口或在主机先切断连接的情况下会自动断开连接。
+※本消息只在第一次打开时显示。
+*/

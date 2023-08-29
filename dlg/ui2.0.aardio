@@ -1,0 +1,62 @@
+import win.ui;
+import web.form;
+/*DSG{{*/
+var winform = win.form(text="SeikiGSTool 概念界面 2版";right=655;bottom=335)
+winform.add(
+button={cls="button";text="确定";left=240;top=208;right=368;bottom=240;ah=1;aw=1;z=9};
+button15={cls="button";text="设置";left=528;top=296;right=632;bottom=328;ah=1;aw=1;z=24};
+button16={cls="button";text="应用";left=544;top=160;right=624;bottom=192;ah=1;aw=1;z=27};
+button2={cls="button";text="从电脑添加MOD";left=240;top=128;right=368;bottom=160;ah=1;aw=1;z=10};
+button3={cls="button";text="移除所选MOD";left=240;top=168;right=368;bottom=200;ah=1;aw=1;z=11};
+button4={cls="button";text="一键开启代理";left=392;top=88;right=480;bottom=120;ah=1;aw=1;z=15};
+button5={cls="button";text="复制";left=488;top=88;right=536;bottom=120;ah=1;aw=1;z=17};
+button6={cls="button";text="复制并分享";left=544;top=88;right=632;bottom=120;ah=1;aw=1;z=18};
+button7={cls="button";text="圆神，启动！";left=504;top=208;right=632;bottom=240;ah=1;aw=1;z=20};
+button8={cls="button";text="关于";left=528;top=256;right=632;bottom=288;ah=1;aw=1;z=21};
+button9={cls="button";text="下载MOD";left=240;top=88;right=368;bottom=120;ah=1;aw=1;z=22};
+checkbox3={cls="checkbox";text="记录Replay";left=400;top=216;right=488;bottom=232;z=23};
+combobox={cls="combobox";left=400;top=168;right=536;bottom=192;edge=1;items={};mode="dropdown";z=26};
+edit={cls="edit";text="Edit";left=8;top=256;right=248;bottom=328;ah=1;autohscroll=false;aw=1;bgcolor=16777215;edge=1;hscroll=1;multiline=1;readonly=1;vscroll=1;z=8};
+edit2={cls="edit";text="114.51.41.91:9810";left=392;top=56;right=632;bottom=80;ah=1;align="center";aw=1;edge=1;font=LOGFONT(h=-14);z=16};
+edit3={cls="edit";text='gs03O(\u2229_\u2229)O哈哈~.dat';left=160;top=40;right=360;bottom=72;ah=1;autohscroll=false;aw=1;edge=1;multiline=1;z=5};
+groupbox={cls="groupbox";text="MOD原名";left=152;top=24;right=368;bottom=80;ah=1;aw=1;edge=1;z=4};
+groupbox2={cls="groupbox";text="第一步：选择一个MOD";left=8;top=8;right=376;bottom=248;ah=1;aw=1;edge=1;z=1};
+groupbox3={cls="groupbox";text="MOD选择与预览";left=16;top=80;right=232;bottom=240;ah=1;aw=1;edge=1;z=6};
+groupbox5={cls="groupbox";text="第二步：单机还是联机";left=384;top=8;right=640;bottom=128;ah=1;aw=1;edge=1;z=12};
+groupbox6={cls="groupbox";text="第三步：圆神启动";left=384;top=128;right=640;bottom=248;ah=1;aw=1;edge=1;z=19};
+groupbox8={cls="groupbox";text="调整窗口大小";left=392;top=144;right=632;bottom=200;ah=1;aw=1;edge=1;z=25};
+listbox2={cls="listbox";left=24;top=96;right=224;bottom=232;ah=1;aw=1;edge=1;hscroll=1;items={};vscroll=1;z=7};
+picturebox={cls="picturebox";left=256;top=256;right=520;bottom=328;z=28};
+radiobutton={cls="radiobutton";text="玩原生";left=24;top=32;right=88;bottom=48;ah=1;aw=1;z=2};
+radiobutton2={cls="radiobutton";text="玩MOD";left=24;top=56;right=104;bottom=72;ah=1;aw=1;z=3};
+radiobutton3={cls="radiobutton";text="单机";left=400;top=32;right=464;bottom=48;ah=1;aw=1;z=13};
+radiobutton4={cls="radiobutton";text="联机";left=464;top=32;right=560;bottom=48;ah=1;aw=1;z=14}
+)
+/*}}*/
+
+winform.listbox2.items = {
+	"gs03xxxxx","gs03aaa","gs03原地生天","gs03wwww","gs03草草"
+	,"gs03","gs03⑨","gs03【2077轮回群夏季活动】"
+	,"gs03蝠⑨合并狗狗公测版2019.5.28.004b3"
+	,"gs03冬活蝙蝠原生版（非官方，未去掉boss显血）"
+	,"gs03滥竽充数1号","gs03滥竽充数1号","gs03滥竽充数1号","gs03滥竽充数1号"
+	,"gs03滥竽充数1号","gs03滥竽充数1号","gs03滥竽充数1号"
+	,"gs03滥竽充数1号","gs03滥竽充数1号","gs03滥竽充数1号"
+	,"gs03滥竽充数1号","gs03滥竽充数1号","gs03滥竽充数1号","gs03滥竽充数1号"
+}
+
+winform.edit.text = 'gs03滥竽充数1号.dat\r\n这里放该MOD滴介绍'
+winform.combobox.items = {
+	"1280×960","1200×900","1024×768","1000×750","960×720","800×600(原始)","640×480"
+}
+/*
+wb = web.form(winform.custom)
+wb.go("http://res.seiki.fun/api/gs/about1.html")
+*/
+//winform.richedit.rangeText(
+
+winform.show();
+
+winform.setIcon("C:\Users\Administrator\Desktop\SeikiGSTool\Seiki.ico")
+
+win.loopMessage();

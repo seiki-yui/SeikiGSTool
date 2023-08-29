@@ -1,0 +1,29 @@
+import key
+import seiki
+import seiki.mgsc
+import seiki.dik
+import console
+
+mgsc = seiki.mgsc()
+mgsc.set_key(seiki.mgsc.KEY_P1_UP,key.VK.Z)
+mgsc.set_key(seiki.mgsc.KEY_P1_DOWN,key.VK.Z)
+mgsc.set_key(seiki.mgsc.KEY_P1_LEFT,key.VK.Z)
+mgsc.set_key(seiki.mgsc.KEY_P1_RIGHT ,key.VK.Z)
+mgsc.save()
+
+console.log("dik","dik16","x","nscan","ndik")
+for(i = 1; /*#mgsc.setting_key*/ 60 ;1){
+	var it = mgsc.setting_key[i]
+	if it == 0 || it == 255 continue
+	var scan = key.scan2v(it)
+	var dik = seiki.dik.dik2v(it)
+	
+	console.log(
+		it, string.replace(tostring(it, 16),"0x",""), key.getName(it), 
+		scan , key.getName(scan), 
+		dik, key.getName(dik)
+	)
+}
+
+
+console.pause()

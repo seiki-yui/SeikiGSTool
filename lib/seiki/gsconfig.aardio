@@ -1,0 +1,135 @@
+﻿//GSConfig
+namespace seiki
+class gsconfig {
+    ctor() {
+        // 键位设置
+        import seiki;
+        import process;
+        import winex;
+        import winex.accObject;
+        import console;
+        import win.ui.ctrl.tab;
+        import thread;
+        
+        this.path = global.path_gsconfig
+        this.prcs = process(this.path)
+        this.hwnd = seiki.waitMainWindow(this.prcs)
+        //hwnd = win.find(,"ゲーム設定")
+        
+        var prcs = this.prcs
+       	replace = function(tab){   
+    		it_win = winex.find("#32770", tab[1], prcs.id)
+    		if (it_win !== null) {
+        		if (tab[2] !== "") winex.setText(it_win, tab[2])
+        		if (#tab > 2) for(i = 3; #tab; 2) {
+            		type_desu = (tab["type"] !== null)? tab["type"][(i - 1) / 2]: "Static"
+            		it_text = winex.findEx(it_win, ,type_desu, tab[i])
+            		if (it_text) {
+            			if (#tab > 3) winex.setText(it_text, tab[i + 1])
+            			if (tab["offset"] !== null) {
+            				var off = tab["offset"][(i - 1) / 2]
+            				if (off !== null) win.setRect(it_text, win.getRect(it_text).
+            					expand(0, off > 0? off: 0).offset(0, - ..math.roundToEven(off / 2)
+            				))
+            			}
+            		}	
+        		}
+    		}
+    		if (tab["func"] !== null) if (type(tab["func"]) == type.function) tab["func"]()
+    		return it_win; 
+		}
+        
+        if replace({
+        	"Error", "错误",
+        	"乽僎乕儉杮懱乿傕偟偔偼乽僎乕儉愝掕乿偑婛偵婲摦偟偰偄傑偡丅", "「游戏本体」或「游戏设置」已经启动了。"
+        }) return null; 
+/*
+        if (winex.getText(this.hwnd) == "Error") {
+            winex.setText(this.hwnd, "错误")
+            replace("Static", "乽僎乕儉杮懱乿傕偟偔偼乽僎乕儉愝掕乿偑婛偵婲摦偟偰偄傑偡丅", "「游戏本体」或「游戏设置」已经启动了。")
+            return null;
+        }
+*/
+        
+        replace = function(type_desu, str1, str2, ox = 0) {
+            var it = winex.findEx(this.hwnd,, type_desu, str1)
+        	winex.setText(it, str2)
+        	if (ox <= 0) return ;  
+        	rc = win.getRect(it)
+        	rc.left += ox
+        	win.setRect(it, rc)
+        }
+        //替换日文
+        winex.setText(this.hwnd, "游戏设置")
+        replace("Button", "標準に戻す", 			"恢复默认设置")
+        replace("Button", "フルスクリーンで起動",	"全屏启动")
+        replace("Button", "キャンセル",			"取消")
+        replace("Button", "音量設定",			"音量设置")
+        replace("Static", "マスター",			"音量")
+        
+        for (i = 1; 2; 1) {
+            if (i == 2) str = "（“ボタン”是“按钮”）。   汉化By xiao_zheng。"
+            else str = '（左侧乱码依次为：键盘(Keyboard)，手柄(GamePad)）。'
+            
+            replace("Static", "決定／弱攻撃", 	  "确定／弱攻击", 10)
+            replace("Static", "キャンセル／強攻撃", "取消／强攻击", 32)
+            replace("Static", "ジャンプ", 		  "跳跃"		   , 13)
+            replace("Static", "魔法使用", 		  "使用魔法"	   , 6)
+            replace("Static", "ポーズ", 			  "暂停"		   , 8)
+            replace("Static", "※設定したい項目", 
+            	'※点击你想设置的键位，按下按键来设置。\n　如果按ESC键，而不是指定一个按键，则会清除该键位。\n　' ++ str)
+        }
+        
+        import thread.command;
+        var listener = thread.command();
+        listener.get_code = lambda() this.prcs.getInfo().exitStatus
+        thread.invoke(function(listener, prcs) {
+            import process;
+            import win;
+            import winex;
+            import console;
+            do {
+            	replace = function(tab){   
+            		it_win = winex.find("#32770", tab[1], prcs.id)
+            		if (it_win) try {
+            			if (tab[2] != "") winex.setText(it_win, tab[2])
+            			if (#tab > 2) for(i = 3; #tab; 2) {
+            				it_text = winex.findEx(it_win, , tab["type" + tostring(i - 2)]? "Static", tab[i])
+            				if (it_text) {
+            					if (#tab > 3) winex.setText(it_text, tab[i + 1])
+            					var off = tab["offset"][(i - 1) / 2]
+            					if (off) win.setRect(it_text, win.getRect(it_text).
+            						expand(0, off > 0? off: 0).
+            						offset(0, - ..math.roundToEven(off / 2)
+            					))
+            				}	
+            			}
+            		}
+            	}
+            	replace({
+            		"妋擣",	"确认",
+            		"曄峏傪", "确定要退出而不保存更改吗？",
+            		offset = { -10 }
+            	})
+            	replace({
+            		"Error",	"错误",
+            		"乽僎乕儉杮懱乿傕偟偔偼乽僎乕儉愝掕乿偑婛偵婲摦偟偰偄傑偡丅", "「游戏本体」或「游戏设置」已经启动了。"
+            	})
+            	replace({
+            		"僄儔乕", "错误",
+            		"儃僞儞愝掕僼傽僀儖偺彂弌偟偵幐攕偟傑偟偨丅", "无法导出配置文件。"
+            	})
+            } while (listener.get_code() != 0 && thread.delay(50))
+        }, listener, this.prcs)
+    };
+}
+
+//acc = winex.accObject.fromWindow(hwnd);
+//acc.find(role = 0x25; name = "僎乕儉僷僢僪";).doDefaultAction()
+//妋擣
+//乽僎乕儉杮懱乿傕偟偔偼乽僎乕儉愝掕乿偑婛偵婲摦偟偰偄傑偡丅
+//「ゲーム本体」もしくは「ゲーム設定」が既に起動しています。
+//「游戏本体」或「游戏设置」已经启动了。
+//曄峏傪曐懚偣偢偵廔椆偟傑偡丅傛傠偟偄偱偡偐丠
+//変更を保存せずに終了します。よろしいですか？
+//acc.find(role = 0x25; name = "僉乕儃乕僪";).doDefaultAction()

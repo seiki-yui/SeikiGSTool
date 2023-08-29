@@ -1,0 +1,102 @@
+// config_mods
+import win.ui;
+import win.ui.listEdit;
+import win.ui.accelerator;
+import fsys;
+import fsys.dlg;
+import fsys.dirWatcher;
+import seiki;
+import console;
+/*DSG{{*/
+var winform = win.form(text="MOD管理";right=399;bottom=319;acceptfiles=1;border="dialog frame")
+winform.add(
+button_add={cls="button";text="添加MOD";left=288;top=8;right=392;bottom=40;ah=1;aw=1;z=2};
+button_delete={cls="button";text="删除MOD";left=288;top=48;right=392;bottom=80;ah=1;aw=1;z=3};
+button_refresh={cls="button";text="刷新列表";left=288;top=144;right=392;bottom=176;ah=1;aw=1;z=4};
+button_rename={cls="button";text="重命名MOD";left=288;top=88;right=392;bottom=120;ah=1;aw=1;z=5};
+listbox={cls="listbox";left=8;top=8;right=280;bottom=312;ah=1;aw=1;edge=1;hscroll=1;items={};vscroll=1;z=1}
+)
+/*}}*/
+
+//::GamePath := "D:\Desktop\GriefSyndrome"
+//io.joinpath(::GamePath, "mods/")
+path = global.path_mods
+get_path = function(name) return io.joinpath(path, name++".dat");
+winform.refresh = function(path) { winform.listbox.items = seiki.get_mods_names(global.path_mods) }
+
+winform.refresh()
+
+listEdit = win.ui.listEdit(winform.listbox)
+listEdit.onEditChanged = function(text, selIndex) {
+    var pretext = winform.listbox.getItemText(selIndex)
+    if (#text < 1) return false;
+    if (pretext != text) fsys.rename(get_path(pretext), get_path(text))
+}
+
+winform.button_rename.oncommand = function(id, event) {
+    if (!winform.listbox.selIndex) return;
+    listEdit.editBox.selIndex = winform.listbox.selIndex
+    listEdit.beginEdit()
+}
+
+winform.button_delete.oncommand = function(id, event) {
+    if (!winform.listbox.selIndex || !listEdit.editBox.hide) return;
+    seiki.delete_into_recycle_bin(get_path(winform.listbox.selText))
+    var index = winform.listbox.selIndex
+    winform.listbox.delete()
+    winform.listbox.selIndex = index
+}
+win.ui.accelerator({
+    {
+        vkey = 46 /* Delete */ ;
+        oncommand = function() winform.button_delete.oncommand()
+    }; {
+        vkey = 113 /* F2 */ ;
+        oncommand = function() winform.button_rename.oncommand()
+    };
+}, winform);
+
+winform.add_mod = function(full_path_list) {
+	return thread.invoke(function(winform, fullpath, path) {
+        import fsys;
+        import fsys.file
+        import io;
+        for _, it in fullpath {
+            var target = io.joinpath(path, io.splitpath(it).file)
+            //if (io.splitpath(it).ext != ".dat") continue;
+            if (it == target) continue;
+            if (io.exist(target)) {
+                var file_from = fsys.file(it, "r");
+                var file_to = fsys.file(target, "r");
+                var size_from, size_to = file_from.size(), file_to.size()
+                file_from.close()
+                file_to.close()
+                if (size_from == size_to) continue;
+            }
+            fsys.copy(it, target)
+            winform.refresh()
+        }
+        winform.button_add.disabled = false;
+    }, winform, full_path_list, path)
+}
+
+
+winform.button_add.oncommand = function(id, event) {
+    fsys.setCurDir(path)
+    var fullpath, filename = fsys.dlg.openEx("GriefSyndrome MOD文件(*.dat)|*.dat", "选择MOD", , winform)
+    if (!fullpath) return;
+    winform.button_add.disabled = true
+    winform.add_mod(fullpath)
+}
+
+winform.button_refresh.oncommand = function(id, event) winform.refresh()
+
+winform.onDropFiles = function(files){
+	if (winform.button_add.disabled) return ; 
+	winform.button_add.disabled = true
+	winform.add_mod(files)
+}
+
+winform.show();
+win.loopMessage();
+return winform;

@@ -1,0 +1,21 @@
+﻿replace = function(tab){   
+    it_win = winex.find("#32770", tab[1], prcs.id)
+    if (it_win !== null) {
+        if (tab[2] !== "") winex.setText(it_win, tab[2])
+        if (#tab > 2) for(i = 3; #tab; 2) {
+            type_desu = (tab["type"] !== null)? tab["type"][(i - 1) / 2]: "Static"
+            it_text = winex.findEx(it_win, ,type_desu, tab[i])
+            if (it_text) {
+            	if (#tab > 3) winex.setText(it_text, tab[i + 1])
+            	if (tab["offset"] !== null) {
+            		var off = tab["offset"][(i - 1) / 2]
+            		if (off !== null) win.setRect(it_text, win.getRect(it_text).
+            			expand(0, off > 0? off: 0).offset(0, - ..math.roundToEven(off / 2)
+            		))
+            	}
+            }	
+        }
+    }
+    if (tab["func"] !== null) if (type(tab["func"]) == type.function) tab["func"]()
+    return it_win; 
+}

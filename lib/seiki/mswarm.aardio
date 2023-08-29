@@ -1,0 +1,28 @@
+﻿//MSwarm
+namespace seiki;
+class mswarm {
+	ctor(){
+		// 未完成 读写Swarm
+		// 虽然说未完成、没有暴露接口
+		// 但是可以通过
+		/*	ms = seiki.mswarm()
+			ms.setting.xxx = xxx;
+			ms.save()
+			参考 string.toml库
+		*/
+		
+		import seiki;
+		import string.toml;
+		
+		var get_path = lambda(path) ..io.joinpath(..io.getSpecial(0x1a /*_CSIDL_APPDATA*/ ), "ami\swarm\config\", path);
+        this.path = get_path("core.toml")
+        this.path_backup = get_path("seiki-backup.toml")
+        
+        this.setting = string.toml.tryParse(..string.load(this.path))
+        
+        fsys.copy(this.path, this.path_backup)
+	};
+	save = function(){
+		string.save(this.path, string.toml.stringify(this.setting))	
+	}
+}

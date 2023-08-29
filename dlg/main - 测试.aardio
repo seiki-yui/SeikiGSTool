@@ -1,0 +1,78 @@
+import win.ui;
+import win;
+import winex;
+import winex.key;
+import winex.mouse;
+import console;
+import process;
+import seiki;
+import seiki.game;
+import seiki.swarm;
+import seiki.gsconfig;
+import seiki.gsonline;
+/*DSG{{*/
+mainForm = win.form(text="SeikiGSTool";right=431;bottom=399)
+mainForm.add(
+button_close={cls="button";text="X";left=392;top=0;right=439;bottom=20;z=1};
+button_gsconfig={cls="button";text="打开GS键位设置";left=48;top=48;right=208;bottom=100;z=5};
+button_gsonline={cls="button";text="打开联机器";left=48;top=112;right=208;bottom=164;z=4};
+button_resize={cls="button";text="调整游戏窗口";left=240;top=136;right=400;bottom=188;z=2};
+button_start={cls="button";text="单机模式开始游戏";left=264;top=344;right=400;bottom=380;z=3};
+button_swarm={cls="button";text="一键Swarm映射";left=48;top=176;right=208;bottom=228;z=6};
+checkbox={cls="checkbox";text="Swarm后台运行";left=64;top=240;right=216;bottom=264;z=7}
+)
+/*}}*/
+
+//::GamePath = io._exedir
+//swarm = seiki.swarm(global.path_swarm, mainForm.checkbox.checked);	
+
+mainForm.show();
+console.open()
+
+//swarm = seiki.swarm(global.path_swarm  ,true);
+//game = seiki.game(global.path_game)
+
+mainForm.button_gsconfig.oncommand = function(id, event) {
+    gsconfig = seiki.gsconfig(global.path_gsconfig)
+}
+
+mainForm.button_gsonline.oncommand = function(id, event) {
+    gsonline = seiki.gsonline(global.path_gsonline, function(prcs) {
+        game = seiki.game(global.path_game, prcs)
+    })
+}
+
+mainForm.button_swarm.oncommand = function(id, event) {
+	//swarm = seiki.swarm()
+    swarm.open()
+}
+
+mainForm.button_resize.oncommand = function(id, event) {
+    try {
+        game.set_size(640, 480)
+    }
+}
+
+mainForm.button_start.oncommand = function(id, event) {
+    game = seiki.game(global.path_game)
+}
+
+mainForm.button_close.oncommand = function(id, event) {
+    try {
+        process.kill(game.prcs.id)
+        process.kill(swarm.prcs.id)
+        process.kill(gsonline.prcs.id)
+        process.kill(gsconfig.prcs.id)
+        winex.close(swarm.hwnd)
+        winex.close(game.hwnd)
+        winex.close(gsonline.hwnd)
+        winex.close(gsconfig.hwnd)
+        swarm.prcs.close()
+    }
+}
+
+mainForm.onClose = function() try {
+    mainForm.button_close.oncommand()
+}
+
+return win.loopMessage();

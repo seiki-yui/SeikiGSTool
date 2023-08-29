@@ -1,0 +1,67 @@
+// config_phrases
+import win;
+import win.ui;
+import win.ui.grid;
+import win.ui.accelerator;
+import fsys;
+import fsys.ini;
+import seiki;
+import console;
+import config;
+import fsys.dlg;
+/*DSG{{*/
+var winform = win.form(text="联机设置";right=399;bottom=319;border="dialog frame")
+winform.add(
+button_set={cls="button";text="汉化gso.log";left=288;top=112;right=392;bottom=144;ah=1;aw=1;z=1};
+checkbox3={cls="checkbox";text="自动识别剪切板ip";left=8;top=112;right=128;bottom=128;z=8};
+checkbox_share={cls="checkbox";text="使用分享文案";left=8;top=8;right=104;bottom=24;z=2};
+checkbox_swarm_popen={cls="checkbox";text="后台运行Swarm";left=8;top=136;right=136;bottom=152;z=7};
+edit_left={cls="edit";left=8;top=32;right=184;bottom=104;edge=1;hscroll=1;multiline=1;vscroll=1;z=3};
+edit_right={cls="edit";left=216;top=32;right=392;bottom=104;edge=1;hscroll=1;multiline=1;vscroll=1;z=4};
+static={cls="static";text="代理界面单击复制，文本将会以如下方式呈现";left=152;top=8;right=392;bottom=24;transparent=1;z=5};
+static2={cls="static";text="+ip+";left=184;top=40;right=216;bottom=64;align="center";transparent=1;z=6}
+)
+/*}}*/
+
+winform.edit_left.text = config.online.share_l
+winform.edit_right.text = config.online.share_r
+winform.checkbox_share.checked = config.online.share
+winform.checkbox_swarm_popen.checked = config.online.swarm_popen
+
+winform.onClose = function(hwnd,message,wParam,lParam){
+	config.online.share_l = winform.edit_left.text
+	config.online.share_r = winform.edit_right.text 
+	config.online.share = winform.checkbox_share.checked
+	config.online.swarm_popen = winform.checkbox_swarm_popen.checked
+}
+
+winform.button_set.oncommand = function(id,event){
+	var orig = fsys.dlg.open("GriefSyndromeOnline日志文件|*.log",,, winform.hwnd, 0, "gso.log")
+	if (orig === null) return ; 
+	str = string.fromUnicode(string.load(orig))
+	
+	replace = function(s1, s2) str = string.replace(str, s1, s2)
+    replace("通信を開始します。", "开始连接。")
+    replace("通信を終了しました。", "连接已关闭。")
+    replace("通信中は終了できません。", "连接中不能关闭程序。请切断连接之后再关闭。")
+    replace("通信中にエラーが発生しました。", "连接发生错误。")
+    replace("ホストから切断されました。", "主机切断了连接。")
+    replace("ホストから応答がありませんでした。", "主机没有应答。")
+    replace("ホストに接続できませんでした。アドレスとポート番号を確認してください。", "无法连接到主机。请确认ip地址和端口号。")
+    replace("他の参加者からの接続を待っています...", "正在等待其他玩家的连接...")
+    replace("参加を受け付けました。", "有玩家接受了连接。")
+    replace("参加が承認されました。（プレイヤー", "成功加入。（玩家")
+    replace("参加者から切断されました。", "有玩家断开了连接。")
+    replace("参加が拒否されました。（受付は終了しました）", "连接请求被拒绝。（房间已满）")
+    replace("参加者に開始を通知しています...", "正在通知参加者开始...")
+    replace("開始されるまでしばらくお待ちください...", "在游戏开始前请稍等...")
+    replace("開始OK。", "开始成功。")
+
+    var target = fsys.dlg.save("GriefSyndromeOnline日志文件|*.log",,, winform.hwnd, 0, "gso_汉化.log")
+    if (target === null) return ;
+    string.save(target, str) 
+}
+
+winform.show();
+win.loopMessage();
+return winform;

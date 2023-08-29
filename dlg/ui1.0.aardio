@@ -1,0 +1,76 @@
+import win.ui;
+import web.form;
+/*DSG{{*/
+var winform = win.form(text="SeikiGSTool 概念界面 1版";right=655;bottom=471;composited=1)
+winform.add(
+button={cls="button";text="确定";left=272;top=424;right=400;bottom=456;ah=1;aw=1;z=10};
+button11={cls="button";text="打开键位设置";left=424;top=312;right=552;bottom=344;ah=1;aw=1;z=25};
+button12={cls="button";text="联机设置";left=560;top=96;right=640;bottom=128;ah=1;aw=1;z=26};
+button14={cls="button";text="Replay设置";left=560;top=208;right=632;bottom=240;ah=1;aw=1;z=29};
+button15={cls="button";text="总设置";left=560;top=312;right=640;bottom=344;ah=1;aw=1;z=30};
+button16={cls="button";text="应用";left=552;top=264;right=632;bottom=296;ah=1;aw=1;z=33};
+button2={cls="button";text="从电脑添加MOD";left=272;top=344;right=400;bottom=376;ah=1;aw=1;z=12};
+button3={cls="button";text="移除所选MOD";left=272;top=384;right=400;bottom=416;ah=1;aw=1;z=13};
+button4={cls="button";text="一键开启代理";left=424;top=96;right=552;bottom=128;ah=1;aw=1;z=17};
+button5={cls="button";text="复制";left=424;top=136;right=504;bottom=168;ah=1;aw=1;z=19};
+button6={cls="button";text="复制并分享";left=512;top=136;right=640;bottom=168;ah=1;aw=1;z=20};
+button7={cls="button";text="圆神，启动！";left=512;top=352;right=640;bottom=384;ah=1;aw=1;z=22};
+button8={cls="button";text="关于";left=424;top=352;right=504;bottom=384;ah=1;aw=1;z=23};
+button9={cls="button";text="下载MOD";left=272;top=304;right=400;bottom=336;ah=1;aw=1;z=24};
+checkbox3={cls="checkbox";text="记录Replay游戏回放";left=432;top=216;right=560;bottom=232;z=28};
+combobox={cls="combobox";left=432;top=272;right=544;bottom=296;edge=1;items={};mode="dropdown";z=32};
+custom={cls="custom";text="自定义控件";left=272;top=24;right=400;bottom=296;ah=1;aw=1;edge=1;z=11};
+edit={cls="edit";text="Edit";left=24;top=360;right=256;bottom=448;ah=1;autohscroll=false;aw=1;bgcolor=16777215;edge=1;hscroll=1;multiline=1;readonly=1;vscroll=1;z=9};
+edit2={cls="edit";text="114.51.41.91:9810";left=424;top=56;right=640;bottom=88;ah=1;align="center";aw=1;edge=1;font=LOGFONT(h=-16);z=18};
+edit3={cls="edit";text='gs03O(\u2229_\u2229)O哈哈~.dat';left=24;top=72;right=256;bottom=112;ah=1;aw=1;edge=1;z=5};
+groupbox={cls="groupbox";text="MOD原名";left=16;top=56;right=264;bottom=120;ah=1;aw=1;edge=1;z=4};
+groupbox2={cls="groupbox";text="第一步：选择一个MOD";left=8;top=8;right=408;bottom=464;ah=1;aw=1;edge=1;z=1};
+groupbox3={cls="groupbox";text="MOD选择与预览";left=16;top=120;right=264;bottom=344;ah=1;aw=1;edge=1;z=6};
+groupbox4={cls="groupbox";text="MOD的介绍说明";left=16;top=344;right=264;bottom=456;ah=1;aw=1;edge=1;z=8};
+groupbox5={cls="groupbox";text="第二步：单机还是联机";left=416;top=8;right=648;bottom=176;ah=1;aw=1;edge=1;z=14};
+groupbox6={cls="groupbox";text="第三步：圆神启动";left=416;top=176;right=648;bottom=392;ah=1;aw=1;edge=1;z=21};
+groupbox7={cls="groupbox";text="Replay游戏回放";left=424;top=192;right=640;bottom=248;ah=1;aw=1;edge=1;z=27};
+groupbox8={cls="groupbox";text="调整窗口大小";left=424;top=248;right=640;bottom=304;ah=1;aw=1;edge=1;z=31};
+listbox2={cls="listbox";left=24;top=136;right=256;bottom=336;ah=1;aw=1;edge=1;hscroll=1;items={};vscroll=1;z=7};
+picturebox={cls="picturebox";left=416;top=392;right=648;bottom=464;z=34};
+radiobutton={cls="radiobutton";text="玩原生";left=16;top=32;right=80;bottom=48;ah=1;aw=1;z=2};
+radiobutton2={cls="radiobutton";text="玩MOD";left=104;top=32;right=200;bottom=48;ah=1;aw=1;z=3};
+radiobutton3={cls="radiobutton";text="单机";left=424;top=32;right=488;bottom=48;ah=1;aw=1;z=15};
+radiobutton4={cls="radiobutton";text="联机";left=512;top=32;right=608;bottom=48;ah=1;aw=1;z=16}
+)
+/*}}*/
+
+winform.listbox2.items = {
+	"gs03xxxxx","gs03aaa","gs03原地生天","gs03wwww","gs03草草"
+	,"gs03","gs03⑨","gs03【2077轮回群夏季活动】"
+	,"gs03蝠⑨合并狗狗公测版2019.5.28.004b3"
+	,"gs03冬活蝙蝠原生版（非官方，未去掉boss显血）"
+	,"gs03滥竽充数1号","gs03滥竽充数1号","gs03滥竽充数1号","gs03滥竽充数1号"
+	,"gs03滥竽充数1号","gs03滥竽充数1号","gs03滥竽充数1号"
+	,"gs03滥竽充数1号","gs03滥竽充数1号","gs03滥竽充数1号"
+	,"gs03滥竽充数1号","gs03滥竽充数1号","gs03滥竽充数1号","gs03滥竽充数1号"
+}
+
+winform.edit.text = 'gs03滥竽充数1号.dat\r\n这里放该MOD滴介绍'
+winform.combobox.items = {
+	"1280×960","1200×900","1024×768","1000×750","960×720","800×600(原始)","640×480"
+}
+
+wb = web.form(winform.custom)
+wb.go("http://res.seiki.fun/api/gs/about1.html")
+
+//winform.richedit.rangeText(
+
+winform.show();
+/*
+for(i=1;100;1){
+	r = 51;
+	for(name,ctrl in winform.eachControl() ){
+		ctrl.setPos(ctrl.left + math.random(-r, r)/100,ctrl.top + math.random(-r, r)/100)
+	}
+	winform.redraw()
+	thread.delay(1000/30)
+}
+*/
+
+win.loopMessage();

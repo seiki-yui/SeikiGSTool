@@ -1,0 +1,72 @@
+// config_phrases
+import win;
+import win.ui;
+import win.ui.grid;
+import win.ui.accelerator;
+import fsys;
+import fsys.ini;
+import seiki;
+import seiki.mgso
+import console;
+/*DSG{{*/
+var winform = win.form(text="快捷短语设置";right=399;bottom=319;border="dialog frame")
+winform.add(
+button_clear={cls="button";text="清除该短语";left=288;top=48;right=392;bottom=80;ah=1;aw=1;z=3};
+button_save={cls="button";text="保存更改";left=288;top=280;right=392;bottom=312;ah=1;aw=1;z=4};
+button_set={cls="button";text="编辑该短语";left=288;top=8;right=392;bottom=40;ah=1;aw=1;z=1};
+listview={cls="listview";left=8;top=8;right=280;bottom=312;edge=1;hscroll=1;msel=false;vscroll=1;z=2}
+)
+/*}}*/
+
+grid = win.ui.grid(winform.listview);
+grid.setReadonlyColumns(1);
+grid.setColumns({ "按键"; "快捷短语"; })
+
+//此处已改用mgso，哈哈
+mgso = seiki.mgso()
+list = seiki.mgso.allow_list
+var tab = mgso.get_im()
+for (i = 1; #list; 1) tab[list[[i]]] := ""
+var tab_new = { fields = { "key", "msg" }  } 
+for (k, v in tab) table.push(tab_new, { key = k; msg = v })
+table.sort(tab_new, lambda(next) owner["key"] < next["key"])
+grid.setTable(tab_new)
+
+winform.button_set.oncommand = function(id, event) {
+    if (winform.listview.selected) grid.beginEdit(winform.listview.selIndex, 2)
+}
+
+winform.button_clear.oncommand = function(id, event) { 
+    winform.listview.setItemText("", winform.listview.selIndex, 2)
+}
+win.ui.accelerator({
+    {
+        vkey = 46 /* Delete */ ;
+        oncommand = function() {
+            if (!grid.editBox.hide) return ;
+            winform.button_clear.oncommand()
+            winform.listview.selIndex += 1
+        }
+    }; {
+        vkey = 113 /* F2 */ ;
+        oncommand = function() winform.button_set.oncommand()
+    };
+}, winform);
+
+winform.onClose = function(hwnd, message, wParam, lParam) {
+	var tab = {}
+	for(i = 1; #list; 1) {
+		var msg = winform.listview.getItemText(i, 2)
+		tab[list[[i]]] = (msg !== null && msg !== "")? msg: null 
+	}
+	mgso.set_im(tab)
+	mgso.save()
+}
+
+winform.button_save.oncommand = function(id,event){
+	winform.onClose()
+}
+
+winform.show();
+win.loopMessage();
+return winform;
