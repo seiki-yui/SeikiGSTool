@@ -2,20 +2,6 @@
 import fsys.config;
 //config  = fsys.config("/config/"); 
 config  = fsys.config( io.appData("/Seiki/GSTool/") ); 
-// := 是delphi里的操作符
-// 因为aardio的语言类型 隐式转换特别迷，就像JS那样
-// 三元运算符是通过 把 ?调整为 and && ，把 :调整为 or || 实现的，
-// 所以一旦 左值为 false，0 的时候也会赋值上去，而不是只有左值为null的时候才赋值、
-// 被这个坑了好多次
-/*
-i = 0; v = 100;
-i := 1;
-v := 9;
-import console;
-console.log(i, v)
-// 此时的i 是 1, v 是 100。
-*/
-
 
 if (config.online.share_l === null)		config.online.share_l := '原生低周娱乐车\r\n'
 if (config.online.share_r === null)		config.online.share_r := ''

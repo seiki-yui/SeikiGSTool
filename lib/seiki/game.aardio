@@ -1,9 +1,6 @@
-﻿//Game
-namespace seiki
+﻿namespace seiki
 class game {
-    ctor(prcs) {
-        // 游戏Game类
-        
+    ctor(size, prcs) {
         import seiki;
         import seiki.game
         import process;
@@ -13,26 +10,23 @@ class game {
         import thread;
         import console;
         
-        this.path = global.path_game
-        this.prcs = prcs ? prcs : process(this.path)
+        path = global.path_game
+        this.prcs = prcs ? prcs : process(path)
         if (this.prcs === null) return; 
-        //等待主窗口
+        
 		this.hwnd = seiki.waitMainWindow(this.prcs, 200)
         if (this.hwnd === null) return; 
-		//获取标题直到游戏响应
+		
 		do { title = winex.getText(this.hwnd)
         	} while (title == null && thread.delay(10))
        
-      	//修复乱码 Shift-JIS的编码错误的以GBK方式显示了，读取会返回UTF-8的字符串
         // UTF-8 -> GBK(GB18030) -> Shift-JIS -> UTF-8
         str = string.fromto(string.fromto(title, 54936), 932)
         str = string.fromUnicode(string.toUnicode(str))
-        // 替换日文
         str = string.replace(str, "再生", "重放")
         str = string.replace(str, "記録", "录像")
-        // 如果OK就换上去标题
         if !string.find(str, "?") winex.setText(this.hwnd, str)
-        
+                
         import thread.command;
         listener = thread.command()
         listener.get_code = λ() this.prcs.getInfo().exitStatus
@@ -63,7 +57,6 @@ class game {
     			return it_win; 
 			}
             do {
-                // 汉化弹出窗口
                 replace({
                 	"DSound-Error", 	"DSound错误", 
                 	"DirectSound僆僽僕僃僋僩偺弶婜壔偵幐攕", 
@@ -115,7 +108,6 @@ class game {
     is_game = function(){
     	return !winex.find("#32770",, this.prcs.id);
     };
-    //设置窗口大小
     set_size = function(w = 800, h = 600) {
         var rc = win.getRect(this.hwnd, true)
         var ox = (rc.width() - w - 6) / 2
@@ -126,11 +118,9 @@ class game {
         win.setRect(this.hwnd, ret, true)
         return ret;
     };
-    //设置窗口大小 4:3等比缩放
     set_size_scale = function(s = 1) {
         return this.set_size(math.roundToEven(800 * s), math.roundToEven(600 * s));
     };
-    //设置窗口大小 从列表读取
     set_size_from_list = function(index) {
     	this.set_size(seiki.size_list[index].width, seiki.size_list[index].height)	
     };

@@ -43,7 +43,7 @@ winform.combobox_game_size.items = {
 winform.show();
 
 wb = web.form(winform.form_web)
-wb.go("\res\index.html")
+wb.go("http://seiki.fun:8008/api/gs/index.html")
 wb.showMsg = λ() false
 wb.showMenu = λ() false
 

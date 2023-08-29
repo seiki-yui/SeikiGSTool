@@ -1,7 +1,6 @@
-﻿//GSOnline
-namespace seiki;
+﻿namespace seiki;
 class gsonline {
-    ctor(func, ...) {
+    ctor(path, func) {
         import seiki;
         import process;
         import winex;
@@ -10,15 +9,13 @@ class gsonline {
         import thread.command;
         import seiki.game;
         import thread
-		
-		this.args = { ... }
-		
-        this.path = global.path_gsonline
-        this.prcs = process(this.path)
+        
+        path := global.path_gsonline
+        this.prcs = process(path)
         this.hwnd = seiki.waitMainWindow(this.prcs, 1000, "GriefSyndrome Online")
         
-        //替换，狠狠滴替换，都可以替换，
-        replace = function(type_desu, str1, str2)  winex.setText(winex.findEx(this.hwnd,, type_desu, str1), str2)        
+        replace = function(type_desu, str1, str2)  winex.setText(winex.findEx(this.hwnd,, type_desu, str1), str2)
+        
         replace("Button", "ホスト", 		"做主机")
         replace("Button", "クライアント","做客机")
         replace("Static", "アドレス", 	"ip地址")
@@ -32,7 +29,7 @@ class gsonline {
         var listener = thread.command();
         listener.get_title = function() try { return winex.getText(this.prcs.waitMainWindow()) }
         listener.get_code = lambda() this.prcs.getInfo().exitStatus
-        listener.game_start = function() { func(this.prcs, ..table.unpackArgs(this.args)) }
+        listener.game_start = function() { func(this.prcs) }
         
         edit = winex.findEx(this.hwnd, 3, "Edit")
         thread.invoke(function(listener, prcs, hwnd, edit) {
@@ -83,7 +80,6 @@ class gsonline {
                     		"开始成功。")
                     if (msg != str) {
                         winex.setText(edit, str)
-                        //发送滚动Message 使用Win32api aardio的黑科技
                         var lh = ::SendMessage(edit, 0xBA /*_EM_GETLINECOUNT*/ )
                         ::SendMessageInt(edit, 0xB6 /*_EM_LINESCROLL*/ , 0, lh - 9)
                     }
@@ -116,9 +112,9 @@ class gsonline {
             		'请在标题画面选择Exit来结束GriefSyndrome。\r\n\r\n\r\n不执行断开连接的操作而强制关闭游戏，无法保证联机正常运行。\r\n\r\n\r\n关闭游戏窗口或在主机先切断连接的情况下会自动断开连接。\r\n\r\n\r\n※本消息只在第一次打开时显示。'
             	})
             } while (win.isWindow(hwnd) && thread.delay(50))
-            //try {
+            try {
  				listener.game_start()
-            //}
+            }
         }, listener, this.prcs, this.hwnd, edit)
     };
 }

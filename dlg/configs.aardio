@@ -11,7 +11,7 @@ tab={cls="tab";left=8;top=8;right=414;bottom=356;ah=1;aw=1;edge=1;z=1}
 
 seiki.set_font(winform)
 
-//w + 6，h + 28
+//tab和子窗口的关系：w + 6，h + 28
 
 /*
 winform.tab.loadForm("\dlg\ui1.0.aardio")
@@ -19,7 +19,6 @@ winform.tab.loadForm("\dlg\ui2.0.aardio")
 winform.tab.loadForm("\dlg\ui3.0.aardio")
 */
 
-//嵌入子窗口
 winform.tab.loadForm("\dlg\config_mods.aardio")
 winform.tab.loadForm("\dlg\config_online.aardio")
 winform.tab.loadForm("\dlg\config_phrases.aardio")

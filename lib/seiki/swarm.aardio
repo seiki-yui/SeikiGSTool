@@ -1,7 +1,6 @@
-﻿//Swarm
-namespace seiki;
+﻿namespace seiki;
 class swarm {
-    ctor(is_popen = true) {
+    ctor(path, is_popen = true) {
         import seiki;
         import process;
         import process.popen;
@@ -16,13 +15,28 @@ class swarm {
         import thread;
         import console;
         
-        this.path := global.path_swarm
+        path := global.path_swarm
         if (is_popen) {
-            this.prcs = process.popen(this.path);
-            do { this.hwnd = win.find(, "Swarm") } while (!this.hwnd && thread.delay(50))
-        } else {
-            this.prcs = process(this.path);
+            this.prcs = process.popen(path);
+            do {
+                this.hwnd = win.find(, "Swarm")
+            } while (!this.hwnd && thread.delay(50))
+        }
+        else {
+            this.prcs = process(path);
             this.hwnd = seiki.waitMainWindow(this.prcs)
+        }
+        
+        this.get_path = λ(path) io.joinpath(io.getSpecial(0x1a /*_CSIDL_APPDATA*/ ), "ami\swarm\config\", path);
+        this.path = this.get_path("core.toml")
+        this.path_backup = this.get_path("seiki-backup.toml")
+        this.ip_last = ""
+        
+        if (io.exist(this.path)) {
+            fsys.copy(this.path, this.path_backup)
+            this.swarm_config = string.toml.tryParse(string.load(this.path))
+            this.swarm_config.host_port = 10800;
+            string.save(this.path, string.toml.stringify(this.swarm_config))
         }
     };
     open = function() {

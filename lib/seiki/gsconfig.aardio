@@ -1,8 +1,7 @@
-﻿//GSConfig
-namespace seiki
+﻿namespace seiki
+
 class gsconfig {
-    ctor() {
-        // 键位设置
+    ctor(path) {
         import seiki;
         import process;
         import winex;
@@ -11,8 +10,8 @@ class gsconfig {
         import win.ui.ctrl.tab;
         import thread;
         
-        this.path = global.path_gsconfig
-        this.prcs = process(this.path)
+        path := global.path_gsconfig
+        this.prcs = process(path)
         this.hwnd = seiki.waitMainWindow(this.prcs)
         //hwnd = win.find(,"ゲーム設定")
         
@@ -59,7 +58,7 @@ class gsconfig {
         	rc.left += ox
         	win.setRect(it, rc)
         }
-        //替换日文
+        
         winex.setText(this.hwnd, "游戏设置")
         replace("Button", "標準に戻す", 			"恢复默认设置")
         replace("Button", "フルスクリーンで起動",	"全屏启动")

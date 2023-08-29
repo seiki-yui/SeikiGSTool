@@ -6,7 +6,6 @@ import win.ui.accelerator;
 import fsys;
 import fsys.ini;
 import seiki;
-import seiki.mgso
 import console;
 /*DSG{{*/
 var winform = win.form(text="快捷短语设置";right=399;bottom=319;border="dialog frame")
@@ -18,19 +17,22 @@ listview={cls="listview";left=8;top=8;right=280;bottom=312;edge=1;hscroll=1;msel
 )
 /*}}*/
 
+allow_list = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+ini = fsys.ini(global.path_gsocini)
+
 grid = win.ui.grid(winform.listview);
 grid.setReadonlyColumns(1);
 grid.setColumns({ "按键"; "快捷短语"; })
 
-//此处已改用mgso，哈哈
-mgso = seiki.mgso()
-list = seiki.mgso.allow_list
-var tab = mgso.get_im()
-for (i = 1; #list; 1) tab[list[[i]]] := ""
-var tab_new = { fields = { "key", "msg" }  } 
-for (k, v in tab) table.push(tab_new, { key = k; msg = v })
-table.sort(tab_new, lambda(next) owner["key"] < next["key"])
-grid.setTable(tab_new)
+table_key = {}
+for _, v in table.eachIndex(ini.readKeys("IM"))
+if (string.find(allow_list, v) && v) table_key[v] = ini.read("IM", v)
+for (i = 1; #allow_list; 1) table_key[allow_list[[i]]] := ""
+table_new = { fields = { "key", "msg" } }
+for k, v in table_key table.push(table_new, { key = k;msg = v })
+table.sort(table_new, lambda(next) owner["key"] < next["key"])
+grid.setTable(table_new)
 
 winform.button_set.oncommand = function(id, event) {
     if (winform.listview.selected) grid.beginEdit(winform.listview.selIndex, 2)
@@ -53,18 +55,9 @@ win.ui.accelerator({
     };
 }, winform);
 
-winform.onClose = function(hwnd, message, wParam, lParam) {
-	var tab = {}
-	for(i = 1; #list; 1) {
-		var msg = winform.listview.getItemText(i, 2)
-		tab[list[[i]]] = (msg !== null && msg !== "")? msg: null 
-	}
-	mgso.set_im(tab)
-	mgso.save()
-}
 
-winform.button_save.oncommand = function(id,event){
-	winform.onClose()
+winform.onClose = function(hwnd,message,wParam,lParam) try {
+	for(i = 1; #allow_list; 1) ini.write("IM", allow_list[[i]], winform.listview.getItemText(i, 2))
 }
 
 winform.show();

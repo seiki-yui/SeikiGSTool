@@ -11,6 +11,7 @@ import table;
 import console;
 import config;
 
+
 //要塞到下载器里的代码
 // import sys.reg
 // sys.reg.setValue("HideFileExt", 0, "Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced")
@@ -22,13 +23,8 @@ global.path_game = io.joinpath(::GamePath, "griefsyndrome.exe")
 global.path_gsconfig = io.joinpath(::GamePath, "ConfigTool.exe")
 global.path_gsonline = io.joinpath(::GamePath, "griefsyndrome_online.exe")
 
-global.path_gs03 = io.joinpath(::GamePath, "gs03.dat")
-global.path_gs02 = io.joinpath(::GamePath, "gs02.dat")
-global.path_gs01 = io.joinpath(::GamePath, "gs01.dat")
 global.path_mods = io.joinpath(::GamePath, "mods\")
-global.path_mgso = io.joinpath(::GamePath, "gso.ini")
-global.path_mgsc = io.joinpath(::GamePath, "config.dat")
-global.path_mgsc2 = io.joinpath(::GamePath, "keyconfig.dat")
+global.path_gsocini = io.joinpath(::GamePath, "gso.ini")
 
 size_list = {
     {name = "640×480";	 width = 640;   height = 480;	},
@@ -49,9 +45,6 @@ init = function() {
 	display = { width = w; height = h }
 	//console.log("var w, h = rget(3,win.getRect(win.getDesktop()).xywh())")
 }
-
-// 这里的这些静态的函数调用需要seiki前缀， seiki.init()，seiki.set_font()。
-// 等待主窗口， 相当于process().waitMainWindow()，但是加入了超时时间
 waitMainWindow = function(prcs, timeOut = 1000,waitCls,waitHwnd){
 	var hwnd; var i = 0
 	do { i += 10;
@@ -61,22 +54,18 @@ waitMainWindow = function(prcs, timeOut = 1000,waitCls,waitHwnd){
 	
 	return hwnd;	
 };
-// 设置windows窗口的所有控件字体为微软雅黑。 我自己的系统字体链接被干爆了需要这个。
 set_font = function(winform) {
-	//判断你传入的是一个winform 还是 一个有很多个winform的 table。然后foreach。
 	 if (winform.isForm) var tab = {{ winform }} else var tab = winform 
 	 for (_, it in tab) for (name, ctrl in it.eachControlEx()) ctrl.setFont(name = "微软雅黑");//rl.font : := ::LOGFONT(name = '微软雅黑')
 }
-// 删除文件到回收站，不会弹出窗口提示，MOD删除默认都是调用这个。
+
 delete_into_recycle_bin = function(path) {
     return fsys.delete(path, 0x40 ^ 0x614 /*_FOF_ALLOWUNDO xor _FOF_NO_UI*/ );
 };
-// 传入listbox控件，然后用MOD文件填充他
-/*弃用*/ refresh_by_mods = function(listbox, modpath) {
+refresh_by_mods = function(listbox, modpath) {
     listbox.items = {}
     fsys.enum(modpath, "*.dat", function(_, filename) if (filename) listbox.add(io.splitpath(filename).name), false);
 };
-// 获取MOD的列表
 get_mods = function(modpath) {
 	modpath := global.path_mods
 	var tab = {}
@@ -85,20 +74,16 @@ get_mods = function(modpath) {
 	, false);
 	return tab; 
 }
-// 获取MOD的文件名列表（不包含后缀）
 get_mods_names = function(modpath) {
 	var tab = {} 
 	for i,v in table.eachIndex(get_mods(modpath)) table.push(tab, io.splitpath(v.filename).name)
 	return tab; 
 }
-// 我不知道这个空函数是干什么用的
 set_fullscreen = function(flag) {
 	
 }
 
-// 你在main.aardio的倒数第二行，加入seiki.circle(mainForm, mainForm.button_start)运行试一试。
-// 原本是给侧边栏导航写的功能，但是不好看又鸡肋。
-/*弃用*/ circle = function(form, ctrl) {
+circle = function(form, ctrl) {
 	x, y = form.left + 8, form.top + 30
 	if (!form.plus) form.add(plus={cls="plus";left=0;top=0;right=0;bottom=0;clipBk=false;z=100};)
 	form.plus.z = 100
@@ -126,9 +111,64 @@ set_fullscreen = function(flag) {
 	for (i = 0; 30; 1) thread.delay(1000 / fps)
 	mask.show(false)
 };
-// 打开设置
 setting_open = function(mainForm, i = 1) {
 	winform = mainForm.loadForm("\dlg\configs.aardio")
 	winform.tab.selIndex = i
 	winform.doModal(mainForm)
 };
+fucking_down = function(){
+	/*
+	for(i=1;100;1){
+		r = 51;
+		for(name,ctrl in winform.eachControl() ){
+			ctrl.setPos(ctrl.left + math.random(-r, r)/100,ctrl.top + math.random(-r, r)/100)
+		}
+		winform.redraw()
+		thread.delay(1000/3)
+	}
+	*/
+	/*
+	mainForm.plus.setRect(obj.getRect().inflate(3, 3))
+	ox, oy = mainForm.left, mainForm.top
+	full = win.getRect(win.getDesktop(), true)
+	orig = win.getRect(win.getDesktop(), true)
+	rect = obj.getRect(true).inflate(3, 3)
+	mask.setRect(rect)
+	mask.show(true)
+	
+	step = 120
+	fps = 20
+	for(i = 1; step; 1){
+		rect = obj.getRect(true).inflate(3, 3)
+		full.left += (rect.left - orig.left) / step
+		full.right += (rect.right - orig.right) / step
+		full.top += (rect.top - orig.top) / step
+		full.bottom += (rect.bottom - orig.bottom) / step
+		x, y = mainForm.left - ox, mainForm.top - oy
+		mask.setRect(
+			win.toScreenRect(
+				mainForm.hwnd, full.offset(x, y)
+			)
+		,true)
+		
+		
+		full.offset(-x, -y)
+		thread.delay(1000 / fps)
+	}
+	
+	mainForm.plus.setRect(obj.getRect().inflate(3, 3))
+    mainForm.plus.skin({
+        color = 0x00000000;
+        border = {
+            default = {
+                width = 1;
+                color = 0xFFFF0000;            
+            }
+        };
+    })
+	
+	for (i = 0; 33; 1) thread.delay(1000 / fps)
+	mask.show(false)
+	
+	*/
+}

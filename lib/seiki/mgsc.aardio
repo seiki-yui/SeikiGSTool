@@ -1,69 +1,15 @@
-﻿//MGSConfig
-//Manager_GSConfig
-namespace seiki
-import seiki.dik;
+﻿namespace seiki
+
 class mgsc {
 	ctor() {
-		//全部涉及读取二进制位
-		
 		import seiki;
-		import key;
-		this.path = global.path_mgsc
-		this.setting = ..string.loadBuffer(this.path)
-		this.path_key = global.path_mgsc2
-		this.setting_key = ..string.loadBuffer(this.path_key)
+		this.path = ..io.joinpath(::GamePath, "config.dat")
+		this.buffer = ..string.loadBuffer(path)
 	};
-	set_fullscreen = function(flag)	{ this.setting[29] = (flag === true)? 0x01: 0x00 };
-	get_fullscreen = function() 	{ return (this.setting[29] === 0x01); };
-	set_volume = function(volume) 	{ this.setting[5] = tonumber(volume, 16) };
-	get_volume = function(volume) 	{ return this.setting[5]; };
-	set_dik = function(pos, k)		{
-		if (k > 0x00 && k <= 0xFF) {
-			this.setting_key[pos] = k
-			this.setting_key[pos + 1] = 0x00
-			this.setting_key[pos + 2] = 0x00
-			this.setting_key[pos + 3] = 0x00
-		} else {
-			this.setting_key[pos] = 0xFF
-			this.setting_key[pos + 1] = 0xFF
-			this.setting_key[pos + 2] = 0xFF
-			this.setting_key[pos + 3] = 0xFF
-		}
+	set_fullscreen = function(flag){
+		this.buffer[29] = (flag === true)? 0x01: 0x00
 	};
-	get_dik = function(pos) 		{ return this.setting_key[pos]; };
-	set_key = function(pos, k)		{ this.set_dik(pos, seiki.dik.v2dik(k: 0)) };
-	get_key = function(pos)			{ return seiki.dik.dik2v(this.get_dik(pos)) };
-	save = function() {
-		..string.save(this.path, this.setting)
-		..string.save(this.path_key, this.setting_key)
-	};
-}
-namespace seiki.mgsc {
-	KEY_P1_UP = 1;
-	KEY_P1_DOWN = 5;
-	KEY_P1_LEFT = 9;
-	KEY_P1_RIGHT = 13;
-	KEY_P1_OK = 17;
-	KEY_P1_CANCEL = 21;
-	KEY_P1_JUMP = 25;
-	KEY_P1_MAGIC = 29;
-	KEY_P1_PAUSE = 33;
-	KEY_P2_UP = 37;
-	KEY_P2_DOWN = 41;
-	KEY_P2_LEFT = 45;
-	KEY_P2_RIGHT = 49;
-	KEY_P2_OK = 53;
-	KEY_P2_CANCEL = 57;
-	KEY_P2_JUMP = 61;
-	KEY_P2_MAGIC = 65;
-	KEY_P2_PAUSE = 69;
-	KEY_P3_UP = 73;
-	KEY_P3_DOWN = 77;
-	KEY_P3_LEFT = 81;
-	KEY_P3_RIGHT = 85;
-	KEY_P3_OK = 89;
-	KEY_P3_CANCEL = 93;
-	KEY_P3_JUMP = 97;
-	KEY_P3_MAGIC = 101;
-	KEY_P3_PAUSE = 105;
+	save = function(){
+		string.save(this.path, this.buffer)
+	}
 }

@@ -1,4 +1,4 @@
-//Main
+//main.aardio
 import win.ui;
 import win.ui.mask;
 import win;
@@ -50,63 +50,10 @@ radiobutton_offline={cls="radiobutton";text="单机";left=512;top=32;right=576;b
 radiobutton_online={cls="radiobutton";text="联机";left=600;top=32;right=696;bottom=48;ah=1;aw=1;z=12};
 radiobutton_use_mod={cls="radiobutton";text="玩MOD";left=360;top=32;right=456;bottom=48;ah=1;aw=1;z=3};
 radiobutton_without_mod={cls="radiobutton";text="玩原生";left=272;top=32;right=336;bottom=48;ah=1;aw=1;z=2};
-static_warning={cls="static";text="Loading...";left=512;top=312;right=696;bottom=368;transparent=1;z=27}
+static_warning={cls="static";text="Loading...";left=512;top=312;right=728;bottom=384;transparent=1;z=27}
 )
 /*}}*/
 
-// 你好我是xiao_zheng看到这条信息我应该已经跑路了
-// 之后不会或很少再维护这个项目了，我会写一些注释
-// 因为项目还在测试新的功能直接运行没法正常运行的
-// Aardio编程工具有超多标准库和扩展库，可以再IDE右下角工具-扩展库下载安装
-/*目前画的饼有：
-OK 单机、联机，原版、MOD游戏启动
-OK MOD管理系统
-OK 自动启动Swarm，一键联机，获取ip（极其暴力的手法
-OK 快捷短语设置
-OK 连机器，按键工具的汉化，修复游戏标题乱码
-OK 游戏里弹出来的窗口的汉化
-OK 复制ip时追加的前缀和后缀短语
-X  更改游戏窗口的大小（有问题，并且无法单独控制（那样直接写单启动器多任务好了
-X  一键下载安装游戏本体+MOD整合包
-X  在工具内实现静默修改 游戏按键（核心功能快实现了，就差手柄不知道怎么办
-X  侧边栏的使用教程，没写完。
-X  兼容AML的MOD包格式（标准好严苛）
-XX 更改游戏内联机信息字体（对不起做不到）
-*/
-/*文件们分别是什么
-\main.aardio				程序的入口点
-\res\build.date				编译时自动填充的编译日期。
-\res\index.html				侧边栏导航的网页文件。
-\dlg\configs.aardio			设置窗口
-\dlg\config_mods.aardio		MOD管理（子窗口）
-\dlg\config_online.aardio	联机设置（子窗口）
-\dlg\config_phrases.aardio	快捷短语设置（子窗口）
-\dlg\main - 测试.aardio		旧程序主页面
-\dlg\ui1.0.aardio			UI设计废案1
-\dlg\ui2.0.aardio			UI设计废案2
-\dlg\ui3.0.aardio			现在使用的UI设计
-config 配置文件	\lib\config.aardio			用户配置
-Game			\lib\seiki\game.aardio		游戏
-GSConfig		\lib\seiki\gsconfig.aardio	键位设置工具汉化
-gskey			\lib\seiki\gskey.aardio		GS键位文件键名测试
-GSOnline		\lib\seiki\gsonline.aardio	连机器汉化
-MGSConfig		\lib\seiki\mgsc.aardio		封装了键位设置文件读写的Manager
-MGSOnline		\lib\seiki\mgso.aardio		封装了连机器配置文件读写的Manager
-MSwarm			\lib\seiki\mswarm.aardio	封装了后台管理Swarm的Manager
-replace			\lib\seiki\replace.aardio	测试-汉化窗口用的函数，供需复制
-Swarm			\lib\seiki\swarm.aardio		前台管理Swarm
-test			\lib\seiki\test.aardio		测试
-test2			\lib\seiki\test2.aardio		测试
-默认库(seiki)	\lib\seiki\_.aardio			程序的初始化
-DIK 键码表		\lib\seiki\dik\DIK.aardio	DirectInput使用的键码表
-test			\lib\seiki\dik\test.aardio	测试
-默认库(seiki.dik)\lib\seiki\dik\_.aardio		DirectInput库
-*/
-
-//mainForm.picturebox.image = "\res\xxxx.jpg"
-//往右下角的框里填充图片，原本是要轮回群的宣传图片的。
-
-// global.系的全局变量都是在用户库-seiki-默认库里定义的，那里是很多东西的初始化起点
 if !io.exist(global.path_game) 	{ 
 	win.msgbox("请将该程序置于游戏根目录。", mainForm.text,, mainForm.hwnd) return ; 
 }
@@ -114,7 +61,6 @@ if !io.exist(global.path_swarm) {
 	win.msgbox("暂未下载Swarm，开房功能将无法使用", mainForm.text,, mainForm.hwnd) 
 }
 
-// 如果在非IDE环境下执行
 if !_STUDIO_INVOKED try {
 	var t = time().setMilliTime(tonumber(string.load("/res/build.date")))
 	if (t.diffsecond(time.now().addday(-3)) < 0) {
@@ -128,46 +74,39 @@ seiki.set_font(mainForm)
 seiki.init()
 //console.open()
 
-//是否连接了网络
 wan, lan = inet.ras.isAlive()
 is_alive = true
+
 if (wan === null && lan === null) {
 	win.msgbox("请在联网的情况下使用该程序。开房功能已禁用。", mainForm.text,, mainForm.hwnd)
 	mainForm.text += " [离线模式]"
 	is_alive = false
 }
 
-//推后执行
 win.setTimeout(
 	function(){
-		// 创建侧边栏网页窗口 调用IE控件
-		//wb = web.form(mainForm.form_web)
-		import 
-		wb = web.blink.form(mainForm.form_web)
-		
-		// 导出函数到网页里，JavaScript直接调用external.tip()可以让Aardio执行下面的seiki.circle()
+		wb = web.form(mainForm.form_web)
 		wb.external = { tip = function(cls) seiki.circle(mainForm, mainForm[cls]) }
-		if (is_alive) wb.go("\res\index.html") //http://seiki.fun:8008/api/gs/v1/index.html
+		if (is_alive) wb.go("http://seiki.fun:8008/api/gs/v1/index.html") 
 		else wb.html = /**<meta charset="utf-8">您暂未联网，无法使用导航功能。**/
-		// 需要UTF-8否则乱码
-		// 禁用弹出窗口信息和窗口右键
 		wb.showMsg = lambda() false
 		wb.showMenu = lambda() false
+
 	}
 )
 
+
+//mainForm.plus.z = 100
 
 mainForm.radiobutton_without_mod.checked = true
 
 mainForm.listbox_mod_viewer.items = seiki.get_mods_names()
 if (#mainForm.listbox_mod_viewer.items == 0) mainForm.edit_mod_name.text = "请单击“管理MOD”来添加MOD"
 
-// MOD预览窗口的选项被调整
 mainForm.listbox_mod_viewer.onSelChange = function() 
 	mainForm.edit_mod_name.text = mainForm.listbox_mod_viewer.selText ++ ".dat"
 
 mainForm.button_mod_manage.oncommand = function(id,event) {
-	//打开设置
 	seiki.setting_open(mainForm)
 	mainForm.listbox_mod_viewer.items = seiki.get_mods_names()
 }
@@ -222,10 +161,8 @@ mainForm.update()
 mainForm.radiobutton_offline.checked = true
 
 //winform.edit.text = 'gs03滥竽充数1号.dat\r\n这里放该MOD滴介绍'
-
-//仅预设窗口高度小于屏幕高度时，才把他放到下拉列表里
 for (_, v in seiki.size_list) if v.height <= seiki.display.height mainForm.combobox_game_size.add(v.name)
-mainForm.combobox_game_size.selIndex = 2 //默认选择800*600
+mainForm.combobox_game_size.selIndex = 2
 
 mainForm.radiobutton_without_mod.oncommand = function() mainForm.update()
 mainForm.radiobutton_use_mod.oncommand = function() mainForm.update()
@@ -237,7 +174,6 @@ mainForm.button_setting.oncommand = function(id, event) {
 	mainForm.listbox_mod_viewer.items = seiki.get_mods_names()
 }
 
-//button_online_connect按钮被按下，叫Swarm点击“中转”按钮
 mainForm.button_online_connect.oncommand = function(id,event){
 	try { 
 		swarm.open()
@@ -252,7 +188,7 @@ mainForm.button_online_copy.oncommand = function(id,event){
 	}
 }
 
-// 显示主窗口
+
 mainForm.show();
 //console.open()
 
@@ -263,13 +199,11 @@ gsconfig = {}
 
 if (is_alive) win.setTimeout(
 	function(){
-		// 创建Swarm，第二个参数是是否在后台静默创建
-		// 由用户设置决定，参考用户库-config 配置文件
-		swarm = seiki.swarm(config.online.swarm_popen)
+		swarm = seiki.swarm(global.path_swarm, config.online.swarm_popen)
 	}
 )
  
-// 创建多线程 外包对象
+
 var listener = thread.command();
 listener.refresh = function() try {
 	thread.delay(100)
@@ -277,17 +211,13 @@ listener.refresh = function() try {
 	if !swarm return ;  
 	if swarm.prcs.getExitCode() == 0 return ; 
 	if (mainForm.ip != ip) mainForm.ip, mainForm.edit_online_ip.text = ip, ip
-} 
-thread.invoke(function(listener) while(true) listener.refresh(), listener)
-// 创建一个线程，叫外包对象 不断获取Swarm的ip文本框，刷新我们的ip文本框
+} thread.invoke(function(listener) while(true) listener.refresh(), listener)
 
-
-// 游戏开始按钮 （未完成 TODO）
-mainForm.button_game_start.oncommand = function(id, event) {
+mainForm.button_game_start.oncommand = function(id,event){
 	target = io.joinpath(::GamePath, "gs03.dat")
 	if (mainForm.radiobutton_use_mod.checked) {
 		if mainForm.listbox_mod_viewer.selIndex == 0 {
-			mainForm.msgbox("您还没有选择一个MOD。",, 0x30/*_MB_ICONEXCLAMATION*/)
+			mainForm.msgbox("您还没有选择一个MOD。",,0x30/*_MB_ICONEXCLAMATION*/)
 			return ; 
 		}
 		var mpath = seiki.get_mods()[mainForm.listbox_mod_viewer.selIndex].fullpath
@@ -297,14 +227,10 @@ mainForm.button_game_start.oncommand = function(id, event) {
 		//fsys.delete(target)
 	}
 	
-	
 	ini = fsys.ini(global.path_gsocini)
 	
-	// hosted智能判断用户是不是房主
 	hosted = #mainForm.edit_online_ip.text > 0
 	
-	// TODO 这里是自动填充ip、端口，需要迁移到MGSOnline，交给mgso.aardio给处理，
-	// 到时候这里直接  mgso = seiki.mgso()，然后mgso.set_xxx()就行了，再mgso.save()一下
 	if (config.online.auto_ip) {
 		ini.write("Network", "IsHost", hosted ? "1" : "0")
 		if (hosted) {
@@ -320,52 +246,47 @@ mainForm.button_game_start.oncommand = function(id, event) {
 		}
 	}
 	ini.write("Font", "Family", "微软雅黑")
-		
+	
 	var sel = mainForm.combobox_game_size.selIndex
 	var is_last = (sel == #mainForm.combobox_game_size.items)
-	// 是否选择了最后一个（也就是全屏）这里的设计有很大问题
+	seiki.set_fullscreen(is_last)
 	
-	// 未完成
 	if (mainForm.radiobutton_offline.checked) {
-		//创建游戏
-		var it = seiki.game()
-		// 非空 且不是报错窗口 就加到游戏任务列表里
-		if (it !== null) if (it.is_game()) table.push(game, it)
+		var it = seiki.game(sel)
+		if (it !== null) {
+			if (it.is_game()) {
+				table.push(game, it)
+			}
+		}
 		//winex.key.altClick( ,0xD/*_VK_ENTER*/)
 	} else {
-		//创建连机器
-		table.push(gsonline, seiki.gsonline(function(prcs) { 
-			// 连机器窗口退出之后，执行这里，直接把连机器的进程id传到新游戏窗口里，自动识别
-			var it = seiki.game(prcs); 
-			if (it !== null) if (it.is_game()) {
-				table.push(game, it)
-				// 这里应该要写游戏窗口的大小调整，但是设计还有问题。
-				// 应该让MGSConfig控制是否全屏，
-				// A.传入seiki.game里的参数就一个prcsID，窗口大小调整的逻辑单独写出去
-				// B.传入seiki.game里的参数prcsID和窗口大小，让game类处理窗口大小逻辑
-				// 小心这个函数是在seiki.gsonline实例的环境里执行的。
+		table.push(gsonline, seiki.gsonline(,function(prcs) { 
+			var it = seiki.game(, prcs); 
+			if (it !== null) {
+				table.push(game, it) 
+				if (it.is_game()) {
+					var sel = mainForm.combobox_game_size.selIndex
+					var is_last = (sel == #mainForm.combobox_game_size.items)
+					if (!is_last) it.set_size_from_list(sel)
+				}
 			}
 		}))
 	}
 }
 
-mainForm.button_game_size.oncommand = function(id, event) {
-	// 设置所有游戏窗口的大小
+mainForm.button_game_size.oncommand = function(id,event) {
 	for i, v in table.eachIndex(game) v.set_size_from_list(mainForm.combobox_game_size.selIndex)
 }
 
-mainForm.button_setting_key.oncommand = function(id, event) {
-	// 打开键位设置
+mainForm.button_setting_key.oncommand = function(id,event) {
 	var it = seiki.gsconfig(); if (it !== null) table.push(gsconfig, it)
 }
 
-mainForm.onClose = function(hwnd, message, wParam, lParam) try {
-	//窗口关闭，杀掉游戏，连机器，键位工具，Swarm进程
+mainForm.onClose = function(hwnd,message,wParam,lParam) try {
 	swarm.prcs.process.kill()
     for(k, v in gsonline) v.prcs.kill()
-	for(k, v in gsconfig) v.prcs.kill()
+	for(k, v in gsonline) v.prcs.kill()
 	for(k, v in game) v.prcs.kill()
 }
-
 
 return win.loopMessage();
